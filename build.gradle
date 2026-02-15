@@ -1,0 +1,60 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'com.google.protobuf' version '0.9.4'
+}
+
+group = 'com.isums'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'io.grpc:grpc-stub:1.79.0'
+    implementation 'io.grpc:grpc-protobuf:1.79.0'
+    implementation 'io.grpc:grpc-netty-shaded:1.79.0'
+    implementation 'com.google.protobuf:protobuf-java:4.34.0-RC2'
+    implementation 'org.apache.groovy:groovy:4.0.14'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:4.34.0-RC2"
+    }
+    plugins {
+        grpc {
+            artifact = "io.grpc:protoc-gen-grpc-java:1.79.0"
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins { grpc {} }
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+publishing {
+    publications {
+        create("mavenJava", MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = "proto-common"
+            version = project.version
+        }
+    }
+}
+test {
+    useJUnitPlatform()
+}
