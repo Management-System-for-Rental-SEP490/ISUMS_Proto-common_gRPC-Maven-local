@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "com.isums.contractservice.grpc";
+option java_package = "com.isums.assetservice.grpc";
 option java_outer_classname = "AssetProto";
 
 import "google/protobuf/timestamp.proto";
