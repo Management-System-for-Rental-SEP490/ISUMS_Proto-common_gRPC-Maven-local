@@ -22,4 +22,5 @@ message UserResponse {
   string name = 2;
   string email = 3;
   string identityNumber = 4;
+  bool isEnabled = 5;
 }

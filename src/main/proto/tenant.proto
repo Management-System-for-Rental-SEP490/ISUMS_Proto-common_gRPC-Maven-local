@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.isums.houseservice.grpc";
+option java_outer_classname = "TenantProto";
+
+import "google/protobuf/timestamp.proto";
+
+service TenantService{
+  rpc GetTenantByUserId(GetTenantByUserIdRequest) returns (TenantResponse);
+}
+
+message GetTenantByUserIdRequest {
+  string userId = 1;
+}
+
+message TenantResponse {
+  string id = 1;
+  bool isActive = 2;
+  google.protobuf.Timestamp created_at = 11;
+}
