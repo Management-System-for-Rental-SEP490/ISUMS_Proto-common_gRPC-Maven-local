@@ -9,6 +9,7 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -17,10 +18,33 @@ dependencies {
     implementation 'io.grpc:grpc-netty-shaded:1.79.0'
     implementation 'com.google.protobuf:protobuf-java:4.34.0-RC2'
     implementation 'org.apache.groovy:groovy:4.0.14'
+    implementation 'org.springframework.boot:spring-boot-starter:4.1.0-M2'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure:4.1.0-M2'
+    implementation 'org.springframework.kafka:spring-kafka:4.1.0-M2'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis:4.1.0-M2'
+    implementation 'org.projectlombok:lombok:1.18.44'
+    annotationProcessor 'org.projectlombok:lombok:1.18.44'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir "${buildDir}/generated/source/proto/main/java"
+            srcDir "${buildDir}/generated/source/proto/main/grpc"
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+tasks.named('processResources') {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 protobuf {
