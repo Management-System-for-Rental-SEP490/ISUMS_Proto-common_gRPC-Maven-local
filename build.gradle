@@ -93,5 +93,3 @@ publishing {
 test {
     useJUnitPlatform()
 }
-
-proto-common/build.gradle.addition
