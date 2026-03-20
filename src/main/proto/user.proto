@@ -7,6 +7,7 @@ option java_outer_classname = "UserProto";
 service UserService {
   rpc GetUserById (GetUserByIdRequest) returns (UserResponse);
   rpc GetUserByEmail (GetUserByEmailRequest) returns (UserResponse);
+  rpc GetUserRoles (GetUserRolesRequest) returns (GetUserRolesResponse);
 }
 
 message GetUserByIdRequest {
@@ -17,10 +18,19 @@ message GetUserByEmailRequest {
   string email = 1;
 }
 
+message GetUserRolesRequest {
+  string keycloakId = 1;
+}
+
+message GetUserRolesResponse {
+  repeated string roles = 1;
+}
+
 message UserResponse {
   string id = 1;
   string name = 2;
   string email = 3;
   string identityNumber = 4;
   bool isEnabled = 5;
+  string keycloakId = 6;
 }
