@@ -8,6 +8,7 @@ service UserService {
   rpc GetUserById (GetUserByIdRequest) returns (UserResponse);
   rpc GetUserByEmail (GetUserByEmailRequest) returns (UserResponse);
   rpc GetUserRoles (GetUserRolesRequest) returns (GetUserRolesResponse);
+  rpc GetUserIdAndRoleByKeyCloakId(GetUserIdAndRoleByKeyCloakIdRequest) returns(UserResponse);
 }
 
 message GetUserByIdRequest {
@@ -22,6 +23,10 @@ message GetUserRolesRequest {
   string keycloakId = 1;
 }
 
+message GetUserIdAndRoleByKeyCloakIdRequest{
+  string keycloakId = 1;
+}
+
 message GetUserRolesResponse {
   repeated string roles = 1;
 }
@@ -33,4 +38,5 @@ message UserResponse {
   string identityNumber = 4;
   bool isEnabled = 5;
   string keycloakId = 6;
+  repeated string roles = 7;
 }
