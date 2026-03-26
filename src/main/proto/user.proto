@@ -38,5 +38,6 @@ message UserResponse {
   string identityNumber = 4;
   bool isEnabled = 5;
   string keycloakId = 6;
-  repeated string roles = 7;
+  string phoneNumber = 7;
+  repeated string roles = 8;
 }
