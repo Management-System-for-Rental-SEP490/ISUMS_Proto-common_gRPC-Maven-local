@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.isums.paymentservice.grpc";
+option java_outer_classname = "PaymentProto";
+
+service PaymentService {
+  rpc GetInvoiceStatus(InvoiceStatusRequest) returns (InvoiceStatusResponse);
+}
+
+message InvoiceStatusRequest {
+  string house_id  = 1;
+  string tenant_id = 2;
+}
+
+message InvoiceStatusResponse {
+  bool   deposit_paid      = 1;
+  bool   first_rent_paid   = 2;
+  string pending_invoice_id = 3;
+}
