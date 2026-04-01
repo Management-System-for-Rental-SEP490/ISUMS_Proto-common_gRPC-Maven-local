@@ -8,10 +8,25 @@ import "google/protobuf/timestamp.proto";
 
 service HouseService{
   rpc GetHouseById(GetHouseRequest) returns (HouseResponse);
+  rpc GetRegionIdByHouseId (GetHouseRequest) returns (GetRegionResponse);
+  rpc GetStaffByRegion (GetRegionRequest) returns (GetStaffByRegionResponse);
+  rpc GetAllHouseByUser (GetHouseByUserRequest) returns (ListHouseResponse);
 }
 
 message GetHouseRequest {
   string houseId = 1;
+}
+
+message GetHouseByUserRequest {
+  string userId = 1;
+}
+
+message GetRegionRequest {
+  string regionId = 1;
+}
+
+message ListHouseResponse {
+  repeated HouseResponse house = 1;
 }
 
 message HouseResponse {
@@ -31,6 +46,8 @@ message HouseResponse {
 
   google.protobuf.Timestamp created_at = 11;
   google.protobuf.Timestamp updated_at = 12;
+
+  string region_id = 13;
 }
 
 message FunctionalAreaResponse {
@@ -45,6 +62,14 @@ message FunctionalAreaResponse {
 
   google.protobuf.Timestamp created_at = 7;
   google.protobuf.Timestamp updated_at = 8;
+}
+
+message GetRegionResponse {
+  string regionId = 1;
+}
+
+message GetStaffByRegionResponse {
+  repeated string staffIds = 1;
 }
 
 enum HouseStatus {
