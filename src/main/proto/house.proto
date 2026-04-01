@@ -10,15 +10,23 @@ service HouseService{
   rpc GetHouseById(GetHouseRequest) returns (HouseResponse);
   rpc GetRegionIdByHouseId (GetHouseRequest) returns (GetRegionResponse);
   rpc GetStaffByRegion (GetRegionRequest) returns (GetStaffByRegionResponse);
-
+  rpc GetAllHouseByUser (GetHouseByUserRequest) returns (ListHouseResponse);
 }
 
 message GetHouseRequest {
   string houseId = 1;
 }
 
+message GetHouseByUserRequest {
+  string userId = 1;
+}
+
 message GetRegionRequest {
   string regionId = 1;
+}
+
+message ListHouseResponse {
+  repeated HouseResponse house = 1;
 }
 
 message HouseResponse {
