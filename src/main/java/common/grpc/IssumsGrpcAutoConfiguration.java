@@ -3,6 +3,8 @@ package common.grpc;
 import com.isums.assetservice.grpc.AssetServiceGrpc;
 import com.isums.houseservice.grpc.HouseServiceGrpc;
 import com.isums.houseservice.grpc.TenantServiceGrpc;
+import com.isums.issueservice.grpc.IssueServiceGrpc;
+import com.isums.maintenanceservice.grpc.MaintenanceServiceGrpc;
 import com.isums.paymentservice.grpc.PaymentServiceGrpc;
 import com.isums.userservice.grpc.UserServiceGrpc;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -77,13 +79,21 @@ public class IssumsGrpcAutoConfiguration {
 //                .withInterceptors(tokenInterceptor);
 //    }
 
-//    // ── issue-service (nếu có) ────────────────────────────────────────────
-//    @Bean
-//    @ConditionalOnMissingBean
-//    @ConditionalOnProperty("spring.grpc.client.channels.issue.address")
-//    public IssueServiceGrpc.IssueServiceBlockingStub issueStub(
-//            GrpcChannelFactory channels, GrpcTokenInterceptor tokenInterceptor) {
-//        return IssueServiceGrpc.newBlockingStub(channels.createChannel("issue"))
-//                .withInterceptors(tokenInterceptor);
-//    }
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty("spring.grpc.client.channels.issue.address")
+    public IssueServiceGrpc.IssueServiceBlockingStub issueStub(
+            GrpcChannelFactory channels, GrpcTokenInterceptor tokenInterceptor) {
+        return IssueServiceGrpc.newBlockingStub(channels.createChannel("issue"))
+                .withInterceptors(tokenInterceptor);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty("spring.grpc.client.channels.maintenance.address")
+    public MaintenanceServiceGrpc.MaintenanceServiceBlockingStub maintenanceStub(
+            GrpcChannelFactory channels, GrpcTokenInterceptor tokenInterceptor) {
+        return MaintenanceServiceGrpc.newBlockingStub(channels.createChannel("maintenance"))
+                .withInterceptors(tokenInterceptor);
+    }
 }
