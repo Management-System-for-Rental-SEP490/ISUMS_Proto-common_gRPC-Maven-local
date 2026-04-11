@@ -6,10 +6,17 @@ option java_outer_classname = "IssueProto";
 
 service IssueService {
   rpc GetQuoteById (GetQuoteByIdRequest) returns (QuoteResponse);
+  rpc GetQuoteDetail(GetQuoteByIdRequest) returns (QuoteDetailResponse);
 }
 
 message GetQuoteByIdRequest {
   string quote_id = 1;
+}
+
+message QuoteItem {
+  string id = 1;
+  string itemName = 2;
+  double price = 3;
 }
 
 message QuoteResponse {
@@ -18,4 +25,14 @@ message QuoteResponse {
   string tenant_id = 3;
   string total_price = 4;
   string status = 5;
+}
+
+message QuoteDetailResponse {
+  string id = 1;
+  string issue_id = 2;
+  string tenant_id = 3;
+  string total_price = 4;
+  string status = 5;
+
+  repeated QuoteItem items = 6;
 }
