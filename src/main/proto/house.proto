@@ -11,6 +11,7 @@ service HouseService{
   rpc GetRegionIdByHouseId (GetHouseRequest) returns (GetRegionResponse);
   rpc GetStaffByRegion (GetRegionRequest) returns (GetStaffByRegionResponse);
   rpc GetAllHouseByUser (GetHouseByUserRequest) returns (ListHouseResponse);
+  rpc GetHousesByManagerRegion (GetHouseByUserRequest) returns (ListHouseResponse);
 }
 
 message GetHouseRequest {
