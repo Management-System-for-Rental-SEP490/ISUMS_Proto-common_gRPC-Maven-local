@@ -10,8 +10,19 @@ service HouseService{
   rpc GetHouseById(GetHouseRequest) returns (HouseResponse);
   rpc GetRegionIdByHouseId (GetHouseRequest) returns (GetRegionResponse);
   rpc GetStaffByRegion (GetRegionRequest) returns (GetStaffByRegionResponse);
+  // Returns houses where the user is the current RENTER (user_rental_id).
+  // Semantically this is the TENANT-scoped list — not "houses owned by
+  // a landlord" as the name suggests. Kept for backward-compat with
+  // existing callers (asset-service, econtract-service); prefer
+  // GetAllHouses for LANDLORD scope.
   rpc GetAllHouseByUser (GetHouseByUserRequest) returns (ListHouseResponse);
   rpc GetHousesByManagerRegion (GetHouseByUserRequest) returns (ListHouseResponse);
+  // Single-landlord B2B model: the LANDLORD owns every house in the
+  // system, so no per-user filter is needed. Callers must enforce
+  // "caller has LANDLORD role" before invoking — this RPC does no
+  // role check itself (gRPC channel is internal, trust boundary is
+  // at the HTTP layer via @PreAuthorize).
+  rpc GetAllHouses (GetAllHousesRequest) returns (ListHouseResponse);
 }
 
 message GetHouseRequest {
@@ -24,6 +35,13 @@ message GetHouseByUserRequest {
 
 message GetRegionRequest {
   string regionId = 1;
+}
+
+// Empty request — LANDLORD owns all houses by domain rule, no per-user
+// filter. A message (even empty) is still required by proto3 so we can
+// evolve the shape later without a breaking change (e.g. add a
+// `statusFilter` field to skip MAINTENANCE houses).
+message GetAllHousesRequest {
 }
 
 message ListHouseResponse {
@@ -49,6 +67,22 @@ message HouseResponse {
   google.protobuf.Timestamp updated_at = 12;
 
   string region_id = 13;
+
+  // Usable area in square meters, serialized as a decimal string ("45.5")
+  // so the proto doesn't force a float rounding on the contract template.
+  // Empty string ("") indicates not set.
+  string area_m2 = 14;
+
+  // Enum name from HouseStructure (LEVEL_4, TUBE_HOUSE, TOWN_HOUSE, VILLA, OTHER).
+  // Empty string ("") indicates not set.
+  string structure = 15;
+
+  // Land use right certificate (GCN) — one per house, referenced by every lease
+  // contract. "" indicates not set.
+  string land_cert_number = 16;
+  // ISO-8601 date string (e.g. "2020-05-15"), "" indicates not set.
+  string land_cert_issue_date = 17;
+  string land_cert_issuer = 18;
 }
 
 message FunctionalAreaResponse {
@@ -67,6 +101,7 @@ message FunctionalAreaResponse {
 
 message GetRegionResponse {
   string regionId = 1;
+  string managerId = 2;
 }
 
 message GetStaffByRegionResponse {

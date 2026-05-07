@@ -3,6 +3,18 @@ plugins {
     id 'maven-publish'
     id 'com.google.protobuf' version '0.9.4'
 }
+configurations.configureEach {
+    resolutionStrategy {
+        force 'com.google.protobuf:protobuf-java:4.34.0'
+        force 'com.google.protobuf:protobuf-java-util:4.34.0'
+        eachDependency { details ->
+            if (details.requested.group == 'com.google.protobuf' && (details.requested.name == 'protobuf-java' || details.requested.name == 'protobuf-java-util')) {
+                details.useVersion '4.34.0'
+                details.because 'Keep protobuf runtime aligned with generated proto-common classes'
+            }
+        }
+    }
+}
 
 group = 'com.isums'
 version = '1.0-SNAPSHOT'
@@ -16,7 +28,7 @@ dependencies {
     implementation 'io.grpc:grpc-stub:1.79.0'
     implementation 'io.grpc:grpc-protobuf:1.79.0'
     implementation 'io.grpc:grpc-netty-shaded:1.79.0'
-    implementation 'com.google.protobuf:protobuf-java:4.34.0-RC2'
+    implementation 'com.google.protobuf:protobuf-java:4.34.0'
     implementation 'org.apache.groovy:groovy:4.0.14'
     implementation 'org.springframework.boot:spring-boot-starter:4.1.0-M2'
     implementation 'org.springframework.boot:spring-boot-autoconfigure:4.1.0-M2'
@@ -30,10 +42,13 @@ dependencies {
     compileOnly 'org.springframework.grpc:spring-grpc-client-spring-boot-starter:1.0.1'
     compileOnly 'org.springframework.boot:spring-boot-starter-data-jpa:4.1.0-M2'
     compileOnly 'org.springframework.boot:spring-boot-starter-validation:4.1.0-M2'
+    compileOnly "jakarta.servlet:jakarta.servlet-api:6.1.0"
     implementation 'tools.jackson.core:jackson-databind:3.1.1'
     annotationProcessor 'org.projectlombok:lombok:1.18.44'
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation "org.assertj:assertj-core:3.26.3"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:4.1.0-M2"
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 }
@@ -57,7 +72,7 @@ tasks.named('processResources') {
 
 protobuf {
     protoc {
-        artifact = "com.google.protobuf:protoc:4.34.0-RC2"
+        artifact = "com.google.protobuf:protoc:4.34.0"
     }
     plugins {
         grpc {
@@ -100,4 +115,11 @@ publishing {
 }
 test {
     useJUnitPlatform()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+}
+configurations {
+    testImplementation.extendsFrom compileOnly
 }

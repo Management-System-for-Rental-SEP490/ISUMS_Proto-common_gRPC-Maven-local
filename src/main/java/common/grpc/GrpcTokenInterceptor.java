@@ -1,6 +1,7 @@
 package common.grpc;
 
 import io.grpc.*;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,20 @@ public class GrpcTokenInterceptor implements ClientInterceptor {
 
     private static final Metadata.Key<String> AUTHORIZATION_KEY =
             Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> TRACEPARENT_KEY =
+            Metadata.Key.of("traceparent", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> TRACESTATE_KEY =
+            Metadata.Key.of("tracestate", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> BAGGAGE_KEY =
+            Metadata.Key.of("baggage", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> REQUEST_ID_KEY =
+            Metadata.Key.of("x-request-id", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> CORRELATION_ID_KEY =
+            Metadata.Key.of("x-correlation-id", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> ACTOR_USER_ID_KEY =
+            Metadata.Key.of("actor-user-id", Metadata.ASCII_STRING_MARSHALLER);
+    private static final Metadata.Key<String> ACTOR_ROLE_KEY =
+            Metadata.Key.of("actor-role", Metadata.ASCII_STRING_MARSHALLER);
 
     @Value("${keycloak.server-url}")
     private String serverUrl;
@@ -55,9 +70,32 @@ public class GrpcTokenInterceptor implements ClientInterceptor {
                     headers.put(AUTHORIZATION_KEY, "Bearer " + getServiceAccountToken());
                 }
 
+                propagateObservabilityHeaders(headers);
                 super.start(responseListener, headers);
             }
         };
+    }
+
+    private void propagateObservabilityHeaders(Metadata headers) {
+        putIfPresent(headers, REQUEST_ID_KEY, MDC.get("requestId"));
+        putIfPresent(headers, CORRELATION_ID_KEY, MDC.get("correlationId"));
+        putIfPresent(headers, ACTOR_USER_ID_KEY, MDC.get("userId"));
+        putIfPresent(headers, ACTOR_ROLE_KEY, MDC.get("role"));
+        putIfPresent(headers, TRACESTATE_KEY, MDC.get("tracestate"));
+        putIfPresent(headers, BAGGAGE_KEY, MDC.get("baggage"));
+
+        String traceId = MDC.get("traceId");
+        String spanId = MDC.get("spanId");
+        if (traceId != null && !traceId.isBlank() && spanId != null && !spanId.isBlank()
+                && headers.get(TRACEPARENT_KEY) == null) {
+            headers.put(TRACEPARENT_KEY, "00-" + traceId + "-" + spanId + "-01");
+        }
+    }
+
+    private void putIfPresent(Metadata headers, Metadata.Key<String> key, String value) {
+        if (value != null && !value.isBlank() && headers.get(key) == null) {
+            headers.put(key, value);
+        }
     }
 
     private synchronized String getServiceAccountToken() {
