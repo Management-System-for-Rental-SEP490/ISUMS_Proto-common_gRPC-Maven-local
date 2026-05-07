@@ -9,6 +9,11 @@ service UserService {
   rpc GetUserByEmail (GetUserByEmailRequest) returns (UserResponse);
   rpc GetUserRoles (GetUserRolesRequest) returns (GetUserRolesResponse);
   rpc GetUserIdAndRoleByKeyCloakId(GetUserIdAndRoleByKeyCloakIdRequest) returns(UserResponse);
+  // Upsert CCCD issue info + permanent address for a user. Called by
+  // econtract-service after a contract is saved so subsequent contracts
+  // for the same tenant can auto-fill without the manager re-typing.
+  // Each field on the request is optional — empty string = don't touch.
+  rpc UpdateUserProfile (UpdateUserProfileRequest) returns (UserResponse);
 }
 
 message GetUserByIdRequest {
@@ -31,6 +36,28 @@ message GetUserRolesResponse {
   repeated string roles = 1;
 }
 
+// Partial update request: non-empty string = apply, empty = keep existing.
+// Dates use ISO-8601 ("2024-05-15") so we don't force a Timestamp marshal
+// across services. Passport/visa block is populated only for foreign
+// tenants; VN tenants leave them empty.
+message UpdateUserProfileRequest {
+  string userId = 1;
+  // VN tenant block
+  string dateOfIssue = 2;
+  string placeOfIssue = 3;
+  string permanentAddress = 4;
+  // Shared
+  string dateOfBirth = 5;
+  string gender = 6;
+  // Foreign tenant block
+  string passportNumber = 7;
+  string passportIssueDate = 8;
+  string passportExpiryDate = 9;
+  string nationality = 10;
+  string visaType = 11;
+  string visaExpiryDate = 12;
+}
+
 message UserResponse {
   string id = 1;
   string name = 2;
@@ -40,4 +67,31 @@ message UserResponse {
   string keycloakId = 6;
   string phoneNumber = 7;
   repeated string roles = 8;
+
+  // Empty string ("") indicates not set.
+  string dateOfIssue = 9;       // ISO-8601 date
+  string placeOfIssue = 10;
+  string permanentAddress = 11;
+
+  // Shared profile.
+  string dateOfBirth = 12;      // ISO-8601 date
+  string gender = 13;           // MALE/FEMALE/OTHER
+
+  // Foreign-tenant block. Empty strings for VN tenants.
+  string passportNumber = 14;
+  string passportIssueDate = 15;
+  string passportExpiryDate = 16;
+  string nationality = 17;
+  string visaType = 18;
+  string visaExpiryDate = 19;
+
+  // User's preferred UI language — ISO 639-1 lowercase ("vi", "en", "ja").
+  // Empty string = unset (treat as "vi" default).
+  string language = 20;
+
+  // For TENANT users: the houses.id they pinned as "where I am living"
+  // — used by the mobile Home screen + voice test fallback (when an
+  // alert dispatch has no explicit houseId, fall back to this so
+  // escalation can resolve the region's manager). Empty = unset.
+  string mainHouseId = 21;
 }

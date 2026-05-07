@@ -33,6 +33,7 @@ public class PageRequestParams {
     private String status;
     private String statuses;
     private String houseId;
+    private String type;
 
     private Map<String, String> filter = new HashMap<>();
 
@@ -41,6 +42,7 @@ public class PageRequestParams {
         if (status   != null) filters.put("status",   status);
         if (statuses != null) filters.put("statuses", statuses);
         if (houseId  != null) filters.put("houseId",  houseId);
+        if (type != null) filters.put("type",type);
         return PageRequest.builder()
                 .page(page - 1)
                 .size(size)

@@ -1,3 +1,5 @@
 common.kafkas.IsumKafkaAutoConfiguration
+common.kafkas.KafkaErrorHandlerAutoConfiguration
 common.paginations.configurations.IsumRedisAutoConfiguration
 common.grpc.IssumsGrpcAutoConfiguration
+com.isums.common.i18n.TranslationI18nAutoConfiguration

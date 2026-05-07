@@ -34,6 +34,12 @@ message AssetItemDto {
 
   repeated AssetImageDto images = 9;
   repeated AssetEventDto events = 10;
+
+  // Multilingual name map keyed by BCP-47 lang code (vi, en, ja). Populated
+  // from the asset entity's translations so the contract template can pick
+  // the right language without a round-trip to AWS Translate. Empty map if
+  // no translations are stored — callers fall back to display_name.
+  map<string, string> translations = 11;
 }
 
 message AssetCategoryDto {
@@ -65,6 +71,7 @@ enum AssetStatus {
   ASSET_STATUS_BROKEN = 3;
   ASSET_STATUS_DISPOSED = 4;
   ASSET_STATUS_DELETED = 5;
+  ASSET_STATUS_WAITING_MANAGER_CONFIRM = 6;
 }
 
 enum AssetEventType {
