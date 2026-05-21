@@ -8,16 +8,42 @@ service IssueService {
   rpc GetQuoteById (GetQuoteByIdRequest) returns (QuoteResponse);
   rpc GetQuoteDetail(GetQuoteByIdRequest) returns (QuoteDetailResponse);
   rpc GetHouseByIssueId(GetIssueRequest) returns (GetIssueResponse);
+  rpc GetLatestQuoteByReference(GetQuoteByReferenceRequest) returns (QuoteFullResponse);
 }
 
 message GetQuoteByIdRequest {
   string quote_id = 1;
 }
 
+message GetQuoteByReferenceRequest {
+  string reference_id = 1;
+  string reference_type = 2;
+}
+
 message QuoteItem {
   string id = 1;
   string itemName = 2;
   double price = 3;
+}
+
+message QuoteFullItem {
+  string id = 1;
+  string itemName = 2;
+  string description = 3;
+  string price = 4;
+}
+
+message QuoteFullResponse {
+  bool found = 1;
+  string id = 2;
+  string reference_id = 3;
+  string reference_type = 4;
+  string staff_id = 5;
+  string total_price = 6;
+  bool is_tenant_fault = 7;
+  string status = 8;
+  int64 created_at_epoch_milli = 9;
+  repeated QuoteFullItem items = 10;
 }
 
 message GetIssueRequest {
