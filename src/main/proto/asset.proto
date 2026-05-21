@@ -8,10 +8,15 @@ import "google/protobuf/timestamp.proto";
 
 service AssetService {
   rpc GetAssetItemsByHouseId(GetAssetItemsByHouseIdRequest) returns (GetAssetItemsResponse);
+  rpc GetAssetById(GetAssetByIdRequest) returns (AssetItemDto);
 }
 
 message GetAssetItemsByHouseIdRequest {
   string house_id = 1;
+}
+
+message GetAssetByIdRequest {
+  string asset_id = 1;
 }
 
 message GetAssetItemsResponse {
