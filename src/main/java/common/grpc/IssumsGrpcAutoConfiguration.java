@@ -70,16 +70,6 @@ public class IssumsGrpcAutoConfiguration {
                 .withInterceptors(tokenInterceptor);
     }
 
-//    // ── contract-service ──────────────────────────────────────────────────
-//    @Bean
-//    @ConditionalOnMissingBean
-//    @ConditionalOnProperty("spring.grpc.client.channels.contract.address")
-//    public ContractServiceGrpc.ContractServiceBlockingStub contractStub(
-//            GrpcChannelFactory channels, GrpcTokenInterceptor tokenInterceptor) {
-//        return ContractServiceGrpc.newBlockingStub(channels.createChannel("contract"))
-//                .withInterceptors(tokenInterceptor);
-//    }
-
     @Bean
     @ConditionalOnMissingBean
     @ConditionalOnProperty("spring.grpc.client.channels.issue.address")

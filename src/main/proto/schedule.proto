@@ -5,8 +5,6 @@ option java_package = "com.isums.scheduleservice.grpc";
 option java_outer_classname = "ScheduleProto";
 
 service ScheduleService {
-  // Trigger auto-assignment for a job (ISSUE / INSPECTION / MAINTENANCE).
-  // Idempotent: returns existing slot if a non-terminal one already exists.
   rpc AutoAssign (AutoAssignRequest) returns (AutoAssignResponse);
 }
 
@@ -14,14 +12,11 @@ message AutoAssignRequest {
   string referenceId = 1;
   string tenantId = 2;
   string houseId = 3;
-  // "ISSUE" | "INSPECTION" | "MAINTENANCE"
   string referenceType = 4;
 }
 
 message AutoAssignResponse {
-  // Empty if no slot was created (e.g., existing slot already covers it).
   string slotId = 1;
   string staffId = 2;
-  // "CREATED" | "ALREADY_EXISTS" | "NO_STAFF"
   string status = 3;
 }
