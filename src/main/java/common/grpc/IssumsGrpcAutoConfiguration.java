@@ -6,6 +6,7 @@ import com.isums.houseservice.grpc.TenantServiceGrpc;
 import com.isums.issueservice.grpc.IssueServiceGrpc;
 import com.isums.maintenanceservice.grpc.MaintenanceServiceGrpc;
 import com.isums.paymentservice.grpc.PaymentServiceGrpc;
+import com.isums.scheduleservice.grpc.ScheduleServiceGrpc;
 import com.isums.userservice.grpc.UserServiceGrpc;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -94,6 +95,15 @@ public class IssumsGrpcAutoConfiguration {
     public MaintenanceServiceGrpc.MaintenanceServiceBlockingStub maintenanceStub(
             GrpcChannelFactory channels, GrpcTokenInterceptor tokenInterceptor) {
         return MaintenanceServiceGrpc.newBlockingStub(channels.createChannel("maintenance"))
+                .withInterceptors(tokenInterceptor);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty("spring.grpc.client.channels.schedule.address")
+    public ScheduleServiceGrpc.ScheduleServiceBlockingStub scheduleStub(
+            GrpcChannelFactory channels, GrpcTokenInterceptor tokenInterceptor) {
+        return ScheduleServiceGrpc.newBlockingStub(channels.createChannel("schedule"))
                 .withInterceptors(tokenInterceptor);
     }
 }
