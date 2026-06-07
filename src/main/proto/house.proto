@@ -23,6 +23,7 @@ service HouseService{
   // role check itself (gRPC channel is internal, trust boundary is
   // at the HTTP layer via @PreAuthorize).
   rpc GetAllHouses (GetAllHousesRequest) returns (ListHouseResponse);
+  rpc GetDepositBookableHouses (GetAllHousesRequest) returns (ListHouseResponse);
 }
 
 message GetHouseRequest {
